@@ -1,9 +1,8 @@
 class Student {
 	constructor(body, waypoint) {
 		this._body = body;
-		if (waypoint) {
-			this._waypoint = waypoint;
-		}
+		this._waypoint = waypoint;
+		this._shouldMove = true;
 		World.add(engine.world, this._body);
 	}
 	
@@ -19,10 +18,27 @@ class Student {
 	}
 	
 	updateVelocity() {
-		if (this._waypoint) {
-			const velocity = Matter.Vector.sub(this._waypoint, this._body.position);
+		if (this._shouldMove) {
+			if (waypoints[this._waypoint].radius !== null) {
+				if ((waypoints[this._waypoint].position.x - this._body.position.x) *
+					(waypoints[this._waypoint].position.x - this._body.position.x) +
+					(waypoints[this._waypoint].position.y - this._body.position.y) *
+					(waypoints[this._waypoint].position.y - this._body.position.y) <
+					waypoints[this._waypoint].radius) {
+					this._waypoint = (this._waypoint + 1) % waypoints.length;
+				}
+			}
+			if (waypoints[this._waypoint].width !== null && waypoints[this._waypoint].height !== null) {
+				if (waypoints[this._waypoint].position.x - waypoints[this._waypoint].width/2 < this._body.position.x &&
+					waypoints[this._waypoint].position.y - waypoints[this._waypoint].height/2 < this._body.position.y &&
+					waypoints[this._waypoint].position.x + waypoints[this._waypoint].width/2 > this._body.position.x &&
+					waypoints[this._waypoint].position.y + waypoints[this._waypoint].height/2 > this._body.position.y) {
+					this._waypoint = (this._waypoint + 1) % waypoints.length;
+				}
+			}
+			const velocity = Matter.Vector.sub(waypoints[this._waypoint].position, this._body.position);
 			const normalised = Matter.Vector.normalise(velocity);
-			Matter.Body.setVelocity(this._body, Matter.Vector.mult(normalised, 2));
+			Matter.Body.setVelocity(this._body, Matter.Vector.mult(normalised, 3));
 		}
 	}
 }
