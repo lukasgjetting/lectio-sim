@@ -15,7 +15,9 @@ engine.world.gravity.y = 0;
 const options = {
 	background: '#ffffff',
 	wireframeBackground: '#ffffff',
-	wireframes: false
+	wireframes: false,
+    width: 800,
+    height: 600,
 };
 
 // Render setup
@@ -27,14 +29,6 @@ const render = Render.create({
 
 // Test objects
 const students = [];
-for (var i = 0; i < 20; i++) {
-	students.push(new Student(
-		Bodies.circle(0, 0, 20, {
-			frictionAir: 0
-		}),
-		Matter.Vector.create(500, 500)
-	));
-}
 
 // Events
 Events.on(render, "afterRender", updateVelocities);
@@ -42,9 +36,28 @@ Events.on(render, "afterRender", updateVelocities);
 // Run
 Engine.run(engine);
 Render.run(render);
+//setInterval(updateVelocities, 100);
+setInterval(spawnDots, 100);
 
 function updateVelocities() {
 	for (var i = 0; i < students.length; i++) {
 		students[i].updateVelocity();
 	}
+}
+
+function spawnDots() {
+	if (students.length < 200) {
+		for (var i = 0; i < 10; i++) {
+			students.push(new Student(
+				Bodies.circle(getRandomInt(0, 800), getRandomInt(0, 600), 10, {
+					frictionAir: 0
+				}),
+				Matter.Vector.create(getRandomInt(0, 800), getRandomInt(0, 600))
+			));
+		}
+	}
+}
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
