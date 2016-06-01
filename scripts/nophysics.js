@@ -2,14 +2,15 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
 const students = [];
-for (var j = 0; j < 4; j++) {
-	for (var i = 0; i < 25; i++) {
+for (var j = 0; j < 7; j++) {
+	const color = getRandomColor();
+	for (var i = 0; i < 20; i++) {
 		students.push(
 			new Student(
 				new Vector(
 					0 + getRandomInt(0, 800),
 					600 + getRandomInt(-50, 50)
-				), 6*j, getRandomDouble(3, 3.5), getRandomColor()
+				), 6*(j), getRandomDouble(3, 3.5), color
 			)
 		);
 	}
@@ -27,6 +28,14 @@ window.requestAnimFrame = (function() {
 })();
 
 animate();
+
+setInterval(function() {
+	for (var i = 0; i < students.length; i++) {
+		students[i].shouldMove = true;
+		students[i].waypointIndex = (students[i].waypointIndex + 1) % waypoints.length;
+		students[i].setWaypoint(students[i].waypointIndex);
+	}
+}, 1000 * 5);
 
 function animate() {
 	requestAnimFrame(animate);
@@ -48,7 +57,7 @@ function move(student) {
 			student.position.y < lower) {
 				if (waypoints[student.waypointIndex].wait !== undefined) {
 					student.shouldMove = false;
-					if (allStill()) {
+					/*if (allStill()) {
 						setTimeout(function() {
 							for (var i = 0; i < students.length; i++) {
 								students[i].shouldMove = true;
@@ -56,7 +65,7 @@ function move(student) {
 								students[i].setWaypoint(students[i].waypointIndex);
 							}
 						}, waypoints[student.waypointIndex].wait * 1000);
-					}
+					}*/
 				} else {
 					student.waypointIndex = (student.waypointIndex + 1) % waypoints.length;
 					student.setWaypoint(student.waypointIndex);
@@ -69,12 +78,14 @@ function move(student) {
 function draw() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	for (var i = 0; i < waypoints.length; i++) {
-		ctx.beginPath();
-		ctx.rect(waypoints[i].position.x - waypoints[i].width/2,
-				 waypoints[i].position.y - waypoints[i].height/2,
-				 waypoints[i].width, waypoints[i].height);
-		ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
-		ctx.fill();
+		if (waypoints[i].draw) {
+			ctx.beginPath();
+			ctx.rect(waypoints[i].position.x - waypoints[i].width/2,
+					 waypoints[i].position.y - waypoints[i].height/2,
+					 waypoints[i].width, waypoints[i].height);
+			ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
+			ctx.fill();
+		}
 	}
 	for (var i = 0; i < students.length; i++) {
 		move(students[i]);
