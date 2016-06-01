@@ -1,10 +1,11 @@
 class Student {
-	constructor(position, waypointIndex, speed) {
+	constructor(position, waypointIndex, speed, color) {
 		this.position = position;
 		this.waypointIndex = waypointIndex;
 		this.shouldMove = true;
 		this.setWaypoint(waypointIndex);
 		this.speed = speed;
+		this.color = color;
 	}
 	
 	setWaypoint(waypointIndex) {
