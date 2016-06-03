@@ -2,18 +2,12 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
 const students = [];
-for (var j = 0; j < 7; j++) {
-	const color = getRandomColor();
-	for (var i = 0; i < 20; i++) {
-		students.push(
-			new Student(
-				new Vector(
-					0 + getRandomInt(0, 800),
-					600 + getRandomInt(-50, 50)
-				), 6*(j), getRandomDouble(3, 3.5), color
-			)
-		);
-	}
+for (var i = 0; i < 500; i++) {
+	students.push(
+		new Student(
+			waypoints[0], 1, 3, getRandomColor()
+		)
+	);
 }
 
 window.requestAnimFrame = (function() {
@@ -29,20 +23,12 @@ window.requestAnimFrame = (function() {
 
 animate();
 
-setInterval(function() {
-	for (var i = 0; i < students.length; i++) {
-		students[i].shouldMove = true;
-		students[i].waypointIndex = (students[i].waypointIndex + 1) % waypoints.length;
-		students[i].setWaypoint(students[i].waypointIndex);
-	}
-}, 1000 * 5);
-
 function animate() {
 	requestAnimFrame(animate);
 	draw();
 }
 
-function move(student) {
+/*function move(student) {
 	if (student.shouldMove) {
 		const direction = student.waypoint.Sub(student.position);
 		const normalised = direction.Normalise();
@@ -57,7 +43,7 @@ function move(student) {
 			student.position.y < lower) {
 				if (waypoints[student.waypointIndex].wait !== undefined) {
 					student.shouldMove = false;
-					/*if (allStill()) {
+					if (allStill()) {
 						setTimeout(function() {
 							for (var i = 0; i < students.length; i++) {
 								students[i].shouldMove = true;
@@ -65,10 +51,41 @@ function move(student) {
 								students[i].setWaypoint(students[i].waypointIndex);
 							}
 						}, waypoints[student.waypointIndex].wait * 1000);
-					}*/
+					}
 				} else {
 					student.waypointIndex = (student.waypointIndex + 1) % waypoints.length;
 					student.setWaypoint(student.waypointIndex);
+				}
+		}
+		
+	}
+}*/
+
+function move(student) {
+	if (student.shouldMove) {
+		const direction = student.innerTarget.Sub(student.position);
+		const normalised = direction.Normalise();
+		student.position = student.position.Add(normalised.Multiply(student.speed));
+		const left  = student.innerTarget.x - 6 / 2;
+		const right = student.innerTarget.x + 6 / 2;
+		const upper = student.innerTarget.y - 6 / 2;
+		const lower = student.innerTarget.y + 6 / 2;
+		if (student.position.x > left &&
+			student.position.x < right &&
+			student.position.y > upper &&
+			student.position.y < lower) {
+				if (student.route[student.routeIndex].wait !== undefined) {
+					student.shouldMove = false;
+					if (allStill()) {
+						setTimeout(function() {
+							for (var i = 0; i < students.length; i++) {
+								students[i].shouldMove = true;
+								student.nextWaypoint();
+							}
+						}, student.route[student.routeIndex].wait * 1000);
+					}
+				} else {
+					student.nextWaypoint();
 				}
 		}
 		
@@ -85,6 +102,8 @@ function draw() {
 					 waypoints[i].width, waypoints[i].height);
 			ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
 			ctx.fill();
+			ctx.fillStyle = '#000000';
+			ctx.fillText(i, waypoints[i].position.x, waypoints[i].position.y);
 		}
 	}
 	for (var i = 0; i < students.length; i++) {
