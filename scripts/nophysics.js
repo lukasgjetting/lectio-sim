@@ -2,10 +2,10 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
 const students = [];
-for (var i = 0; i < 500; i++) {
+for (var i = 0; i < 10; i++) {
 	students.push(
 		new Student(
-			waypoints[0], 1, 3, getRandomColor()
+			waypoints[getRandomInt(0,10)], waypoints[getRandomInt(0,10)], 3, getRandomColor()
 		)
 	);
 }
@@ -28,41 +28,8 @@ function animate() {
 	draw();
 }
 
-/*function move(student) {
-	if (student.shouldMove) {
-		const direction = student.waypoint.Sub(student.position);
-		const normalised = direction.Normalise();
-		student.position = student.position.Add(normalised.Multiply(student.speed));
-		const left  = student.waypoint.x - 6 / 2;
-		const right = student.waypoint.x + 6 / 2;
-		const upper = student.waypoint.y - 6 / 2;
-		const lower = student.waypoint.y + 6 / 2;
-		if (student.position.x > left &&
-			student.position.x < right &&
-			student.position.y > upper &&
-			student.position.y < lower) {
-				if (waypoints[student.waypointIndex].wait !== undefined) {
-					student.shouldMove = false;
-					if (allStill()) {
-						setTimeout(function() {
-							for (var i = 0; i < students.length; i++) {
-								students[i].shouldMove = true;
-								students[i].waypointIndex = (students[i].waypointIndex + 1) % waypoints.length;
-								students[i].setWaypoint(students[i].waypointIndex);
-							}
-						}, waypoints[student.waypointIndex].wait * 1000);
-					}
-				} else {
-					student.waypointIndex = (student.waypointIndex + 1) % waypoints.length;
-					student.setWaypoint(student.waypointIndex);
-				}
-		}
-		
-	}
-}*/
-
 function move(student) {
-	if (student.shouldMove) {
+	if (student.shouldMove && student.innerTarget !== undefined) {
 		const direction = student.innerTarget.Sub(student.position);
 		const normalised = direction.Normalise();
 		student.position = student.position.Add(normalised.Multiply(student.speed));
@@ -74,9 +41,10 @@ function move(student) {
 			student.position.x < right &&
 			student.position.y > upper &&
 			student.position.y < lower) {
-				if (student.route[student.routeIndex].wait !== undefined) {
+				if (student.route[student.routeIndex].wait !== undefined ||
+					student.route.length - 1 === student.routeIndex) {
 					student.shouldMove = false;
-					if (allStill()) {
+					if (allStill() && false) {
 						setTimeout(function() {
 							for (var i = 0; i < students.length; i++) {
 								students[i].shouldMove = true;
@@ -94,6 +62,22 @@ function move(student) {
 
 function draw() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	drawPaths();
+	drawWaypoints();
+	drawStudents();
+}
+
+function drawStudents() {
+	for (var i = 0; i < students.length; i++) {
+		move(students[i]);
+		ctx.beginPath();
+		ctx.arc(students[i].position.x, students[i].position.y, 10, 0, Math.PI * 2);
+		ctx.fillStyle = students[i].color;
+		ctx.fill();
+	}
+}
+
+function drawWaypoints() {
 	for (var i = 0; i < waypoints.length; i++) {
 		if (waypoints[i].draw) {
 			ctx.beginPath();
@@ -106,12 +90,24 @@ function draw() {
 			ctx.fillText(i, waypoints[i].position.x, waypoints[i].position.y);
 		}
 	}
-	for (var i = 0; i < students.length; i++) {
-		move(students[i]);
-		ctx.beginPath();
-		ctx.arc(students[i].position.x, students[i].position.y, 10, 0, Math.PI * 2);
-		ctx.fillStyle = students[i].color;
-		ctx.fill();
+}
+
+function drawPaths() {
+	let lines = [];
+	for (let i = 0; i < waypoints.length; i++) {
+		for (let j = 0; j < waypoints[i].neighbors.length; j++) {
+			let line = {
+				point1: waypoints[i].position,
+				point2: waypoints[waypoints[i].neighbors[j]].position
+			};
+			if (lines.indexOf(line) == -1) {
+				lines.push(line);
+				ctx.beginPath();
+				ctx.moveTo(line.point1.x, line.point1.y);
+				ctx.lineTo(line.point2.x, line.point2.y);
+				ctx.stroke();
+			}
+		}
 	}
 }
 
