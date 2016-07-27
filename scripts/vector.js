@@ -20,6 +20,9 @@
 		}
 		
 		divide(number) {
+			if (number === 0) {
+				return new Vector();
+			}
 			return new Vector(this.x / number, this.y / number);
 		}
 		

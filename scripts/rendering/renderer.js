@@ -1,10 +1,10 @@
 (function() {
-	const students = require('../students.js');
+	const people = require('../debug.js').people;
 	const layout = require('../layout.js');
 	const config = require('../config.js');
-	const Waypoint = require('../map/waypoint.js');
-	const Room = require('../map/room.js');
-	const Teleporter = require('../map/teleporter.js');
+	const Waypoint = require('../waypoints/waypoint.js');
+	const Room = require('../waypoints/room.js');
+	const Teleporter = require('../waypoints/teleporter.js');
 
 	module.exports = {
 		render: render
@@ -18,16 +18,16 @@
 		if (config.waypoints.draw) {
 			drawWaypoints(ctx);
 		}
-		if (config.students.draw) {
-			drawStudents(ctx);
+		if (config.people.draw) {
+			drawPeople(ctx);
 		}
 	}
 
-	function drawStudents(ctx) {
-		for (var i = 0; i < students.length; i++) {
+	function drawPeople(ctx) {
+		for (var i = 0; i < people.length; i++) {
 			ctx.beginPath();
-			ctx.arc(students[i].position.x, students[i].position.y, config.students.radius, 0, Math.PI * 2);
-			ctx.fillStyle = students[i].color;
+			ctx.arc(people[i].position.x, people[i].position.y, config.people.radius, 0, Math.PI * 2);
+			ctx.fillStyle = people[i].color;
 			ctx.fill();
 		}
 	}

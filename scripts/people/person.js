@@ -1,10 +1,10 @@
 (function() {
-	const Vector = require('./vector.js');
-	const config = require('./config.js');
-	const pathfinding = require('./pathfinding.js');
-	const Teleporter = require('./map/teleporter.js');
+	const Vector = require('../vector.js');
+	const config = require('../config.js');
+	const pathfinding = require('../pathfinding.js');
+	const Teleporter = require('../waypoints/teleporter.js');
 	
-	module.exports = class Student {
+	module.exports = class Person {
 		constructor(origin, destination, color) {
 			this.position = origin.variation();
 			if (this.position === undefined) {
@@ -15,7 +15,7 @@
 				color = 'rgba(0, 0, 0, 1)';
 			}
 			this.shouldMove = true;
-			this.speed = config.students.speed;
+			this.speed = config.people.speed;
 			
 			this.route = pathfinding.calculateRoute(origin, destination);
 			if (this.route !== undefined && this.route.length > 0) {
@@ -46,10 +46,10 @@
 		}
 		
 		isAtTarget() {
-			const left = this.targetPosition.x - config.students.targetThreshold;
-			const right = this.targetPosition.x + config.students.targetThreshold;
-			const upper = this.targetPosition.y - config.students.targetThreshold;
-			const lower = this.targetPosition.y + config.students.targetThreshold;
+			const left = this.targetPosition.x - config.people.targetThreshold;
+			const right = this.targetPosition.x + config.people.targetThreshold;
+			const upper = this.targetPosition.y - config.people.targetThreshold;
+			const lower = this.targetPosition.y + config.people.targetThreshold;
 			return (this.position.x > left &&
 					this.position.x < right &&
 					this.position.y > upper &&

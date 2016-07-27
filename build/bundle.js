@@ -46,8 +46,7 @@
 
 	(function() {
 		const canvas = __webpack_require__(1);
-		const students = __webpack_require__(3);
-		
+	
 		canvas.animate();
 	}());
 
@@ -57,7 +56,7 @@
 
 	(function() {
 		const renderer = __webpack_require__(2);
-		const students = __webpack_require__(3);
+		const people = __webpack_require__(3).people;
 		
 		const canvas = document.getElementById('canvas');
 		const ctx = canvas.getContext('2d');
@@ -76,8 +75,8 @@
 		function animate() {
 		    requestAnimFrame(animate);
 		    renderer.render(ctx);
-		    for (var i = 0; i < students.length; i++) {
-		    	students[i].move();
+		    for (var i = 0; i < people.length; i++) {
+		    	people[i].move();
 		    }
 		}
 		
@@ -92,12 +91,12 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	(function() {
-		const students = __webpack_require__(3);
-		const layout = __webpack_require__(8);
-		const config = __webpack_require__(6);
-		const Waypoint = __webpack_require__(9);
-		const Room = __webpack_require__(11);
-		const Teleporter = __webpack_require__(12);
+		const people = __webpack_require__(3).people;
+		const layout = __webpack_require__(9);
+		const config = __webpack_require__(7);
+		const Waypoint = __webpack_require__(10);
+		const Room = __webpack_require__(12);
+		const Teleporter = __webpack_require__(13);
 	
 		module.exports = {
 			render: render
@@ -111,16 +110,16 @@
 			if (config.waypoints.draw) {
 				drawWaypoints(ctx);
 			}
-			if (config.students.draw) {
-				drawStudents(ctx);
+			if (config.people.draw) {
+				drawPeople(ctx);
 			}
 		}
 	
-		function drawStudents(ctx) {
-			for (var i = 0; i < students.length; i++) {
+		function drawPeople(ctx) {
+			for (var i = 0; i < people.length; i++) {
 				ctx.beginPath();
-				ctx.arc(students[i].position.x, students[i].position.y, config.students.radius, 0, Math.PI * 2);
-				ctx.fillStyle = students[i].color;
+				ctx.arc(people[i].position.x, people[i].position.y, config.people.radius, 0, Math.PI * 2);
+				ctx.fillStyle = people[i].color;
 				ctx.fill();
 			}
 		}
@@ -219,31 +218,58 @@
 
 	(function() {
 		const Student = __webpack_require__(4);
-		const Waypoint = __webpack_require__(9);
-		const Vector = __webpack_require__(5);
-		const utils = __webpack_require__(10);
-		const rooms = __webpack_require__(8).rooms;
-		const config = __webpack_require__(6);
+		const Teacher = __webpack_require__(14);
+		const Waypoint = __webpack_require__(10);
+		const Vector = __webpack_require__(6);
+		const utils = __webpack_require__(11);
+		const rooms = __webpack_require__(9).rooms;
+		const config = __webpack_require__(7);
 		
+		let people = [];
 		let students = [];
+		let teachers = [];
+		
 		initialize();
 		
-		module.exports = students;
+		for (var i = 0; i < people.length; i++) {
+			if (people[i] instanceof Student) {
+				students.push(people[i]);
+			} else if (people[i] instanceof Teacher) {
+				teachers.push(people[i]);
+			}
+		}
+		
+		module.exports = {
+			people: people,
+			students: students,
+			teachers: teachers
+		};
 		
 		// Todo: Load from scrape
 		function initialize() {
-			students = [];
-			for (let i = 0; i < config.students.debug.amount; i++) {
+			for (let i = 0; i < config.debug.students.amount; i++) {
 				const origin = rooms[utils.randomInt(0, rooms.length - 1)];
 				const destination = rooms[utils.randomInt(0, rooms.length - 1)];
 				let color;
-				if (config.students.useRandomColors) {
+				if (config.people.students.useRandomColors) {
 					color = utils.randomColor();
 				} else {
-					color = config.students.color;
+					color = config.people.students.color;
 				}
 				const student = new Student(origin, destination, color);
-				students.push(student);
+				people.push(student);
+			}
+			for (let i = 0; i < config.debug.teachers.amount; i++) {
+				const origin = rooms[utils.randomInt(0, rooms.length - 1)];
+				const destination = rooms[utils.randomInt(0, rooms.length - 1)];
+				let color;
+				if (config.people.teachers.useRandomColors) {
+					color = utils.randomColor();
+				} else {
+					color = config.people.teachers.color;
+				}
+				const teacher = new Teacher(origin, destination, color);
+				people.push(teacher);
 			}
 		}
 	}());
@@ -253,12 +279,25 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	(function() {
-		const Vector = __webpack_require__(5);
-		const config = __webpack_require__(6);
-		const pathfinding = __webpack_require__(7);
-		const Teleporter = __webpack_require__(12);
+		const Person = __webpack_require__(5);
 		
-		module.exports = class Student {
+		module.exports = class Student extends Person {
+			
+		};
+	}());
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	(function() {
+		const Vector = __webpack_require__(6);
+		const config = __webpack_require__(7);
+		const pathfinding = __webpack_require__(8);
+		const Teleporter = __webpack_require__(13);
+		
+		module.exports = class Person {
 			constructor(origin, destination, color) {
 				this.position = origin.variation();
 				if (this.position === undefined) {
@@ -269,7 +308,7 @@
 					color = 'rgba(0, 0, 0, 1)';
 				}
 				this.shouldMove = true;
-				this.speed = config.students.speed;
+				this.speed = config.people.speed;
 				
 				this.route = pathfinding.calculateRoute(origin, destination);
 				if (this.route !== undefined && this.route.length > 0) {
@@ -300,10 +339,10 @@
 			}
 			
 			isAtTarget() {
-				const left = this.targetPosition.x - config.students.targetThreshold;
-				const right = this.targetPosition.x + config.students.targetThreshold;
-				const upper = this.targetPosition.y - config.students.targetThreshold;
-				const lower = this.targetPosition.y + config.students.targetThreshold;
+				const left = this.targetPosition.x - config.people.targetThreshold;
+				const right = this.targetPosition.x + config.people.targetThreshold;
+				const upper = this.targetPosition.y - config.people.targetThreshold;
+				const lower = this.targetPosition.y + config.people.targetThreshold;
 				return (this.position.x > left &&
 						this.position.x < right &&
 						this.position.y > upper &&
@@ -314,7 +353,7 @@
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	(function() {
@@ -339,6 +378,9 @@
 			}
 			
 			divide(number) {
+				if (number === 0) {
+					return new Vector();
+				}
 				return new Vector(this.x / number, this.y / number);
 			}
 			
@@ -361,25 +403,28 @@
 	}());
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports) {
 
 	(function() {
 		module.exports = {
-			students: {
+			people: {
+				targetThreshold: 3,
 				draw: true,
 				radius: 10,
-				useRandomColors: true,
-				speed: 3,
-				color: 'rgba(255, 0, 0, 1)',
-				targetThreshold: 3,
-				debug: {
-					amount: 1
+				speed: 2,
+				students: {
+					useRandomColors: false,
+					color: 'rgba(255, 0, 0, 1)',
+				},
+				teachers: {
+					useRandomColors: false,
+					color: 'rgba(0, 0, 255, 1)',
 				}
 			},
 			waypoints: {
 				draw: true,
-				color: 'rgba(127, 255, 127, 1)',
+				color: 'rgba(127, 127, 255, 1)',
 				drawIds: true,
 				idColor: 'rgba(0, 0, 0, 1)',
 				rooms: {
@@ -389,7 +434,7 @@
 					idColor: 'rgba(0, 0, 0, 1)',
 					teleporters: {
 						draw: true,
-						color: 'rgba(127, 255, 127, 1)',
+						color: 'rgba(255, 127, 127, 1)',
 						drawIds: true,
 						idColor: 'rgba(0, 0, 0, 1)',
 					}
@@ -401,17 +446,25 @@
 				color: 'rgba(0, 0, 0, 1)',
 				drawTeleportPaths: true,
 				teleportPathColor: 'rgba(255, 0, 0, 0.2)',
+			},
+			debug: {
+				students: {
+					amount: 29
+				},
+				teachers: {
+					amount: 1
+				}
 			}
 		};
 	}());
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	(function() {
-		const waypoints = __webpack_require__(8).waypoints;
-		const Teleporter = __webpack_require__(12);
+		const waypoints = __webpack_require__(9).waypoints;
+		const Teleporter = __webpack_require__(13);
 		
 		module.exports = {
 			calculateRoute: calculateRoute
@@ -468,14 +521,14 @@
 	}());
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	(function() {
-		const Vector = __webpack_require__(5);
-		const Waypoint = __webpack_require__(9);
-		const Room = __webpack_require__(11);
-		const Teleporter = __webpack_require__(12);
+		const Vector = __webpack_require__(6);
+		const Waypoint = __webpack_require__(10);
+		const Room = __webpack_require__(12);
+		const Teleporter = __webpack_require__(13);
 	
 		const waypoints = [
 			new Teleporter(new Vector(90, 300), 30, 30, [1,11]),
@@ -488,10 +541,10 @@
 			new Room(new Vector(350, 175), 30, 30, [6,8]),
 			new Room(new Vector(500, 175), 30, 30, [7,10]),
 			new Room(new Vector(500, 425), 30, 30, [10,2]),
-			new Room(new Vector(500, 300), 30, 30, [8,9,13]),
+			new Room(new Vector(500, 300), 30, 30, [8,9]),
 			new Teleporter(new Vector(600, 200), 30, 30, [0,12,13]),
 			new Room(new Vector(600, 075), 30, 30, [11,13]),
-			new Room(new Vector(600, 300), 30, 30, [11,15,10]),
+			new Room(new Vector(600, 300), 30, 30, [11,15]),
 			new Room(new Vector(750, 075), 30, 30, [12,15]),
 			new Room(new Vector(750, 300), 30, 30, [13,13]),
 		];
@@ -516,13 +569,13 @@
 	}());
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	(function() {
-		const Vector = __webpack_require__(5);
-		const utils = __webpack_require__(10);
-		const config = __webpack_require__(6);
+		const Vector = __webpack_require__(6);
+		const utils = __webpack_require__(11);
+		const config = __webpack_require__(7);
 		
 		module.exports = class Waypoint {
 			constructor(position, neighbors) {
@@ -539,7 +592,7 @@
 	}());
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	(function() {
@@ -563,14 +616,14 @@
 	}());
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	(function() {
-		const utils = __webpack_require__(10);
-		const config = __webpack_require__(6);
-		const Vector = __webpack_require__(5);
-		const Waypoint = __webpack_require__(9);
+		const utils = __webpack_require__(11);
+		const config = __webpack_require__(7);
+		const Vector = __webpack_require__(6);
+		const Waypoint = __webpack_require__(10);
 		
 		module.exports = class Room extends Waypoint {
 			constructor(position, width, height, neighbors) {
@@ -588,10 +641,10 @@
 			variation() {
 				return this.position.sub(
 					new Vector(
-						utils.randomInt(-this.width / 2 + config.students.radius,
-										 this.width / 2 - config.students.radius),
-						utils.randomInt(-this.height / 2 + config.students.radius,
-										 this.height / 2 - config.students.radius)
+						utils.randomInt(-this.width / 2 + config.people.radius,
+										 this.width / 2 - config.people.radius),
+						utils.randomInt(-this.height / 2 + config.people.radius,
+										 this.height / 2 - config.people.radius)
 					)
 				);
 			}
@@ -599,25 +652,32 @@
 	}());
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	(function() {
-		const Room = __webpack_require__(11);
+		const Room = __webpack_require__(12);
 		
 		// Will teleport a person to the first teleporter in this waypoint's list of neighbors.
-		// The teleporter can be set to preserve the persons x and/or y coordinates relative to
-		// the teleporter when teleporting. This is useful if you for exmaple want to have two
-		// wide teleporters and don't want to the person jumping from one side to the other when
-		// they teleport.
 		module.exports = class Teleporter extends Room {
 			constructor(position, width, height, neighbors, preserveX, preserveY) {
 				super(position, width, height, neighbors);
-				this.preserveX = preserveX;
-				this.preserveY = preserveY;
 			}
 		};
 	}());
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	(function() {
+		const Person = __webpack_require__(5);
+		
+		module.exports = class Teacher extends Person {
+			
+		};
+	}());
+
 
 /***/ }
 /******/ ]);

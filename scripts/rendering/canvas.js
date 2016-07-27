@@ -1,6 +1,6 @@
 (function() {
 	const renderer = require('./renderer.js');
-	const students = require('../students.js');
+	const people = require('../debug.js').people;
 	
 	const canvas = document.getElementById('canvas');
 	const ctx = canvas.getContext('2d');
@@ -19,8 +19,8 @@
 	function animate() {
 	    requestAnimFrame(animate);
 	    renderer.render(ctx);
-	    for (var i = 0; i < students.length; i++) {
-	    	students[i].move();
+	    for (var i = 0; i < people.length; i++) {
+	    	people[i].move();
 	    }
 	}
 	

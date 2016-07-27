@@ -1,8 +1,8 @@
 (function() {
 	const Vector = require('./vector.js');
-	const Waypoint = require('./map/waypoint.js');
-	const Room = require('./map/room.js');
-	const Teleporter = require('./map/teleporter.js');
+	const Waypoint = require('./waypoints/waypoint.js');
+	const Room = require('./waypoints/room.js');
+	const Teleporter = require('./waypoints/teleporter.js');
 
 	const waypoints = [
 		new Teleporter(new Vector(90, 300), 30, 30, [1,11]),
@@ -15,10 +15,10 @@
 		new Room(new Vector(350, 175), 30, 30, [6,8]),
 		new Room(new Vector(500, 175), 30, 30, [7,10]),
 		new Room(new Vector(500, 425), 30, 30, [10,2]),
-		new Room(new Vector(500, 300), 30, 30, [8,9,13]),
+		new Room(new Vector(500, 300), 30, 30, [8,9]),
 		new Teleporter(new Vector(600, 200), 30, 30, [0,12,13]),
 		new Room(new Vector(600, 075), 30, 30, [11,13]),
-		new Room(new Vector(600, 300), 30, 30, [11,15,10]),
+		new Room(new Vector(600, 300), 30, 30, [11,15]),
 		new Room(new Vector(750, 075), 30, 30, [12,15]),
 		new Room(new Vector(750, 300), 30, 30, [13,13]),
 	];

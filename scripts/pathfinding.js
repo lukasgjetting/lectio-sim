@@ -1,6 +1,6 @@
 (function() {
 	const waypoints = require('./layout.js').waypoints;
-	const Teleporter = require('./map/teleporter.js');
+	const Teleporter = require('./waypoints/teleporter.js');
 	
 	module.exports = {
 		calculateRoute: calculateRoute

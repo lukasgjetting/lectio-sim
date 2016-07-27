@@ -1,19 +1,22 @@
 (function() {
 	module.exports = {
-		students: {
+		people: {
+			targetThreshold: 3,
 			draw: true,
 			radius: 10,
-			useRandomColors: true,
-			speed: 3,
-			color: 'rgba(255, 0, 0, 1)',
-			targetThreshold: 3,
-			debug: {
-				amount: 1
+			speed: 2,
+			students: {
+				useRandomColors: false,
+				color: 'rgba(255, 0, 0, 1)',
+			},
+			teachers: {
+				useRandomColors: false,
+				color: 'rgba(0, 0, 255, 1)',
 			}
 		},
 		waypoints: {
 			draw: true,
-			color: 'rgba(127, 255, 127, 1)',
+			color: 'rgba(127, 127, 255, 1)',
 			drawIds: true,
 			idColor: 'rgba(0, 0, 0, 1)',
 			rooms: {
@@ -23,7 +26,7 @@
 				idColor: 'rgba(0, 0, 0, 1)',
 				teleporters: {
 					draw: true,
-					color: 'rgba(127, 255, 127, 1)',
+					color: 'rgba(255, 127, 127, 1)',
 					drawIds: true,
 					idColor: 'rgba(0, 0, 0, 1)',
 				}
@@ -35,6 +38,14 @@
 			color: 'rgba(0, 0, 0, 1)',
 			drawTeleportPaths: true,
 			teleportPathColor: 'rgba(255, 0, 0, 0.2)',
+		},
+		debug: {
+			students: {
+				amount: 29
+			},
+			teachers: {
+				amount: 1
+			}
 		}
 	};
 }());
