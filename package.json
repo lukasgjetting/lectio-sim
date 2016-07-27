@@ -1,0 +1,19 @@
+{
+  "name": "lectio-sim",
+  "version": "1.0.0",
+  "description": "A simple simulation of my school, made with public data from Lectio.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TobLoef/lectio-sim.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TobLoef/lectio-sim/issues"
+  },
+  "homepage": "https://github.com/TobLoef/lectio-sim#readme"
+}
