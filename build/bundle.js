@@ -57,6 +57,7 @@
 	(function() {
 		const renderer = __webpack_require__(2);
 		const people = __webpack_require__(3).people;
+		const scheduler = __webpack_require__(16);
 		
 		const canvas = document.getElementById('canvas');
 		const ctx = canvas.getContext('2d');
@@ -74,6 +75,7 @@
 		
 		function animate() {
 		    requestAnimFrame(animate);
+		    scheduler.tick();
 		    renderer.render(ctx);
 		    for (var i = 0; i < people.length; i++) {
 		    	people[i].move();
@@ -219,11 +221,10 @@
 	(function() {
 		const Student = __webpack_require__(4);
 		const Teacher = __webpack_require__(14);
-		const Waypoint = __webpack_require__(10);
-		const Vector = __webpack_require__(6);
 		const utils = __webpack_require__(11);
 		const rooms = __webpack_require__(9).rooms;
 		const config = __webpack_require__(7);
+		const json = __webpack_require__(15);
 		
 		let people = [];
 		let students = [];
@@ -245,31 +246,17 @@
 			teachers: teachers
 		};
 		
-		// Todo: Load from scrape
 		function initialize() {
-			for (let i = 0; i < config.debug.students.amount; i++) {
-				const origin = rooms[utils.randomInt(0, rooms.length - 1)];
-				const destination = rooms[utils.randomInt(0, rooms.length - 1)];
+			for (let i = 0; i < json.students.length; i++) {
+				const schedule = json.students[i].schedule;
 				let color;
 				if (config.people.students.useRandomColors) {
 					color = utils.randomColor();
 				} else {
 					color = config.people.students.color;
 				}
-				const student = new Student(origin, destination, color);
+				const student = new Student(schedule, color);
 				people.push(student);
-			}
-			for (let i = 0; i < config.debug.teachers.amount; i++) {
-				const origin = rooms[utils.randomInt(0, rooms.length - 1)];
-				const destination = rooms[utils.randomInt(0, rooms.length - 1)];
-				let color;
-				if (config.people.teachers.useRandomColors) {
-					color = utils.randomColor();
-				} else {
-					color = config.people.teachers.color;
-				}
-				const teacher = new Teacher(origin, destination, color);
-				people.push(teacher);
 			}
 		}
 	}());
@@ -295,11 +282,18 @@
 		const Vector = __webpack_require__(6);
 		const config = __webpack_require__(7);
 		const pathfinding = __webpack_require__(8);
+		const Room = __webpack_require__(12);
 		const Teleporter = __webpack_require__(13);
+		const waypoints = __webpack_require__(9).waypoints;
 		
 		module.exports = class Person {
-			constructor(origin, destination, color) {
-				this.position = origin.variation();
+			constructor(schedule, color) {
+				this.schedule = schedule;
+				if (waypoints[schedule[0].room.id] instanceof Room) {
+					this.position = waypoints[schedule[0].room.id].variation();
+				} else {
+					this.position = waypoints[schedule[0].room.id].position;
+				}
 				if (this.position === undefined) {
 					position = new Vector();
 				}
@@ -310,10 +304,7 @@
 				this.shouldMove = true;
 				this.speed = config.people.speed;
 				
-				this.route = pathfinding.calculateRoute(origin, destination);
-				if (this.route !== undefined && this.route.length > 0) {
-					this.targetPosition = this.route[0].variation();
-				}
+				this.nextRoute();
 			}
 			
 			move() {
@@ -347,6 +338,18 @@
 						this.position.x < right &&
 						this.position.y > upper &&
 						this.position.y < lower);
+			}
+			
+			nextRoute() {
+				if (this.schedule.length > 1) {
+					const origin = waypoints[this.schedule[0].room.id];
+					const destination = waypoints[this.schedule[1].room.id];
+					this.route = pathfinding.calculateRoute(origin, destination);
+					if (this.route !== undefined && this.route.length > 0) {
+						this.targetPosition = this.route[0].variation();
+						this.shouldMove = true;
+					}
+				}
 			}
 		};
 	}());
@@ -484,7 +487,7 @@
 				}
 				return bestRoute.route.reverse();
 			} else {
-				return [];
+				return undefined;
 			}
 		}
 		
@@ -678,6 +681,73 @@
 		};
 	}());
 
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	module.exports = {
+		"students": [
+			{
+				"name": "Tobias Løfgren",
+				"schedule": [
+					{
+						"start": 29400,
+						"end": 34800,
+						"room": {
+							"name": "C3 101",
+							"id": 5
+						}
+					},
+					{
+						"start": 36000,
+						"end": 41400,
+						"room": {
+							"name": "C3 107",
+							"id": 12
+						}
+					},
+					{
+						"start": 43200,
+						"end": 48600,
+						"room": {
+							"name": "C3 103",
+							"id": 9
+						}
+					}
+				]
+			}
+		]
+	};
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	const json = __webpack_require__(15);
+	const people = __webpack_require__(3).people;
+	const pathfinding = __webpack_require__(8);
+	
+	(function() {
+		// In seconds
+		let time = 30000;
+		
+		module.exports = {
+			tick: tick
+		};
+		
+		function tick() {
+			time += 10;
+			for (var i = 0; i < people.length; i++) {
+				if (people[i].schedule.length > 0) {
+					if (time > people[i].schedule[0].end) {
+						people[i].schedule.shift();
+						people[i].nextRoute();
+					}
+				}
+			}
+		}
+	}());
 
 /***/ }
 /******/ ]);

@@ -1,5 +1,5 @@
 (function() {
-	const people = require('../debug.js').people;
+	const people = require('../peopleManager.js').people;
 	const layout = require('../layout.js');
 	const config = require('../config.js');
 	const Waypoint = require('../waypoints/waypoint.js');

@@ -1,7 +1,7 @@
 {
   "name": "lectio-sim",
   "version": "1.0.0",
-  "description": "A simple simulation of my school, made with public data from Lectio.",
+  "description": "A basic simulation of my school, made with public data from Lectio.",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/TobLoef/lectio-sim/issues"
   },
-  "homepage": "https://github.com/TobLoef/lectio-sim#readme"
+  "homepage": "https://github.com/TobLoef/lectio-sim#readme",
+  "dependencies": {
+    "cheerio": "^0.20.0",
+    "json-loader": "^0.5.4",
+    "request": "^2.74.0"
+  }
 }

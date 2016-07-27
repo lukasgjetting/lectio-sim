@@ -1,0 +1,36 @@
+{
+	"students": [
+		{
+			"name": "Tobias Løfgren",
+			"schedule": [
+				{
+					"start": 29400,
+					"end": 34800,
+					"room": {
+						"name": "C3 101",
+						"id": 5
+					}
+					
+				},
+				{
+					"start": 36000,
+					"end": 41400,
+					"room": {
+						"name": "C3 107",
+						"id": 12
+					}
+					
+				},
+				{
+					"start": 43200,
+					"end": 48600,
+					"room": {
+						"name": "C3 103",
+						"id": 9
+					}
+					
+				}
+			]
+		}
+	]
+}

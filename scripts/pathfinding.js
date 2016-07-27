@@ -20,7 +20,7 @@
 			}
 			return bestRoute.route.reverse();
 		} else {
-			return [];
+			return undefined;
 		}
 	}
 	

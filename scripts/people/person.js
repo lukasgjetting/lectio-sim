@@ -2,11 +2,18 @@
 	const Vector = require('../vector.js');
 	const config = require('../config.js');
 	const pathfinding = require('../pathfinding.js');
+	const Room = require('../waypoints/room.js');
 	const Teleporter = require('../waypoints/teleporter.js');
+	const waypoints = require('../layout.js').waypoints;
 	
 	module.exports = class Person {
-		constructor(origin, destination, color) {
-			this.position = origin.variation();
+		constructor(schedule, color) {
+			this.schedule = schedule;
+			if (waypoints[schedule[0].room.id] instanceof Room) {
+				this.position = waypoints[schedule[0].room.id].variation();
+			} else {
+				this.position = waypoints[schedule[0].room.id].position;
+			}
 			if (this.position === undefined) {
 				position = new Vector();
 			}
@@ -17,10 +24,7 @@
 			this.shouldMove = true;
 			this.speed = config.people.speed;
 			
-			this.route = pathfinding.calculateRoute(origin, destination);
-			if (this.route !== undefined && this.route.length > 0) {
-				this.targetPosition = this.route[0].variation();
-			}
+			this.nextRoute();
 		}
 		
 		move() {
@@ -54,6 +58,18 @@
 					this.position.x < right &&
 					this.position.y > upper &&
 					this.position.y < lower);
+		}
+		
+		nextRoute() {
+			if (this.schedule.length > 1) {
+				const origin = waypoints[this.schedule[0].room.id];
+				const destination = waypoints[this.schedule[1].room.id];
+				this.route = pathfinding.calculateRoute(origin, destination);
+				if (this.route !== undefined && this.route.length > 0) {
+					this.targetPosition = this.route[0].variation();
+					this.shouldMove = true;
+				}
+			}
 		}
 	};
 }());
