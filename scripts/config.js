@@ -11,12 +11,12 @@
 		waypoints: {
 			draw: true,
 			drawNumbers: false,
-			color: 'rgba(0, 255, 0, 1)',
+			color: 'rgba(127, 255, 127, 1)',
 		},
 		paths: {
 			draw: true,
-			width: 10,
-			color: 'rgba(127, 255, 127, 1)',
+			width: 2,
+			color: 'rgba(0, 0, 0, 1)',
 		}
 	};
 }());
