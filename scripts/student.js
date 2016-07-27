@@ -2,10 +2,11 @@
 	const Vector = require('./vector.js');
 	const config = require('./config.js');
 	const pathfinding = require('./pathfinding.js');
+	const Teleporter = require('./map/teleporter.js');
 	
 	module.exports = class Student {
-		constructor(waypoint, destination, color) {
-			this.position = waypoint.variation();
+		constructor(origin, destination, color) {
+			this.position = origin.variation();
 			if (this.position === undefined) {
 				position = new Vector();
 			}
@@ -16,7 +17,7 @@
 			this.shouldMove = true;
 			this.speed = config.students.speed;
 			
-			this.route = pathfinding.calculateRoute(waypoint, destination);
+			this.route = pathfinding.calculateRoute(origin, destination);
 			if (this.route !== undefined && this.route.length > 0) {
 				this.targetPosition = this.route[0].variation();
 			}
@@ -28,11 +29,17 @@
 				const normalized = direction.normalize();
 				this.position = this.position.add(normalized.multiply(this.speed));
 				if (this.isAtTarget()) {
+					const shouldTeleport = this.route.length > 0 &&
+										   this.route[0] instanceof Teleporter &&
+										   this.route[1] instanceof Teleporter;
 					this.route.shift();
 					if (this.route.length === 0) {
 						this.shouldMove = false;
 					} else {
 						this.targetPosition = this.route[0].variation();
+						if (shouldTeleport) {
+							this.position = this.targetPosition;
+						}
 					}
 				}
 			}

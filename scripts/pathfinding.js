@@ -1,5 +1,6 @@
 (function() {
 	const waypoints = require('./layout.js').waypoints;
+	const Teleporter = require('./map/teleporter.js');
 	
 	module.exports = {
 		calculateRoute: calculateRoute
@@ -41,10 +42,16 @@
 	}
 	
 	function dist(waypoint1, waypoint2) {
-		x1 = waypoint1.position.x;
-		x2 = waypoint2.position.x;
-		y1 = waypoint1.position.y;
-		y2 = waypoint2.position.y;
-		return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+		const isTeleporterPath = waypoint1 instanceof Teleporter &&
+								 waypoint2 instanceof Teleporter;
+		if (!isTeleporterPath) {
+			x1 = waypoint1.position.x;
+			x2 = waypoint2.position.x;
+			y1 = waypoint1.position.y;
+			y2 = waypoint2.position.y;
+			return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+		} else {
+			return 0;
+		}
 	}
 }());
