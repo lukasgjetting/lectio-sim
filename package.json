@@ -2,7 +2,7 @@
   "name": "lectio-sim",
   "version": "1.0.0",
   "description": "A basic simulation of my school, made with public data from Lectio.",
-  "main": "main.js",
+  "main": "/scripts/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
