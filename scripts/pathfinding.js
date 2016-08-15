@@ -43,10 +43,10 @@
 		const isTeleporterPath = waypoint1 instanceof Teleporter &&
 								 waypoint2 instanceof Teleporter;
 		if (!isTeleporterPath) {
-			x1 = waypoint1.position.x;
-			x2 = waypoint2.position.x;
-			y1 = waypoint1.position.y;
-			y2 = waypoint2.position.y;
+			const x1 = waypoint1.position.x;
+			const x2 = waypoint2.position.x;
+			const y1 = waypoint1.position.y;
+			const y2 = waypoint2.position.y;
 			return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 		}
 		return 0;

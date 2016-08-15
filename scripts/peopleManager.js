@@ -2,13 +2,12 @@
 	const Student = require('./people/student.js');
 	const Teacher = require('./people/teacher.js');
 	const utils = require('./utils.js');
-	const rooms = require('./layout.js').rooms;
 	const config = require('./config.js');
 	const json = require('json!./scraping/test.json');
 
-	let people = [];
-	let students = [];
-	let teachers = [];
+	const people = [];
+	const students = [];
+	const teachers = [];
 
 	initialize();
 

@@ -1,6 +1,5 @@
 (function () {
 	const Vector = require('./vector.js');
-	const Waypoint = require('./waypoints/waypoint.js');
 	const Room = require('./waypoints/room.js');
 	const Teleporter = require('./waypoints/teleporter.js');
 

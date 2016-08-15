@@ -1,6 +1,4 @@
-const json = require('json!./scraping/test.json');
 const people = require('./peopleManager.js').people;
-const pathfinding = require('./pathfinding.js');
 
 (function () {
 	// In seconds
