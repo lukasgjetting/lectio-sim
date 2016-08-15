@@ -1,19 +1,19 @@
-(function() {
+(function () {
 	module.exports = {
-		randomInt: randomInt,
-		randomDouble: randomDouble,
-		randomColor: randomColor
+		randomInt,
+		randomDouble,
+		randomColor
 	};
-		
+
 	function randomInt(min, max) {
-	    return Math.floor(Math.random() * (max - min + 1)) + min;
+		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
-	
+
 	function randomDouble(min, max) {
-	    return Math.random() * (max - min + 1) + min;
+		return Math.random() * (max - min + 1) + min;
 	}
-	
+
 	function randomColor() {
-	    return 'rgba(' + randomInt(0, 255) + ', ' + randomInt(0, 255) + ', ' + randomInt(0, 255) + ', 1)';
+		return `rgba(${randomInt(0, 255)}, ${randomInt(0, 255)}, ${randomInt(0, 255)}, 1)`;
 	}
 }());

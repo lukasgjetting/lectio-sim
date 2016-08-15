@@ -1,11 +1,11 @@
-(function() {
+(function () {
 	const Vector = require('../vector.js');
 	const config = require('../config.js');
 	const pathfinding = require('../pathfinding.js');
 	const Room = require('../waypoints/room.js');
 	const Teleporter = require('../waypoints/teleporter.js');
 	const waypoints = require('../layout.js').waypoints;
-	
+
 	module.exports = class Person {
 		constructor(schedule, color) {
 			this.schedule = schedule;
@@ -15,18 +15,18 @@
 				this.position = waypoints[schedule[0].room.id].position;
 			}
 			if (this.position === undefined) {
-				position = new Vector();
+				this.position = new Vector();
 			}
 			this.color = color;
 			if (this.color === undefined) {
-				color = 'rgba(0, 0, 0, 1)';
+				this.color = 'rgba(0, 0, 0, 1)';
 			}
 			this.shouldMove = true;
 			this.speed = config.people.speed;
-			
+
 			this.nextRoute();
 		}
-		
+
 		move() {
 			if (this.shouldMove && this.targetPosition !== undefined) {
 				const direction = this.targetPosition.sub(this.position);
@@ -48,7 +48,7 @@
 				}
 			}
 		}
-		
+
 		isAtTarget() {
 			const left = this.targetPosition.x - config.people.targetThreshold;
 			const right = this.targetPosition.x + config.people.targetThreshold;
@@ -59,7 +59,7 @@
 					this.position.y > upper &&
 					this.position.y < lower);
 		}
-		
+
 		nextRoute() {
 			if (this.schedule.length > 1) {
 				const origin = waypoints[this.schedule[0].room.id];

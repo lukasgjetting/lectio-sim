@@ -1,9 +1,9 @@
-(function() {
+(function () {
 	const utils = require('../utils.js');
 	const config = require('../config.js');
 	const Vector = require('../vector.js');
 	const Waypoint = require('./waypoint.js');
-	
+
 	module.exports = class Room extends Waypoint {
 		constructor(position, width, height, neighbors) {
 			super(position, neighbors);
@@ -16,7 +16,7 @@
 				this.height = 0;
 			}
 		}
-		
+
 		variation() {
 			return this.position.sub(
 				new Vector(
