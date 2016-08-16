@@ -57,8 +57,8 @@
 	function drawRoom(ctx, room) {
 		ctx.beginPath();
 		ctx.rect(
-			room.position.x - room.width / 2,
-			room.position.y - room.height / 2,
+			room.position.x - (room.width / 2),
+			room.position.y - (room.height / 2),
 			room.width,
 			room.height
 		);
@@ -73,8 +73,8 @@
 	function drawTeleporter(ctx, teleporter) {
 		ctx.beginPath();
 		ctx.rect(
-			teleporter.position.x - teleporter.width / 2,
-			teleporter.position.y - teleporter.height / 2,
+			teleporter.position.x - (teleporter.width / 2),
+			teleporter.position.y - (teleporter.height / 2),
 			teleporter.width,
 			teleporter.height
 		);
@@ -82,7 +82,8 @@
 		ctx.fill();
 		if (config.waypoints.drawIds) {
 			ctx.fillStyle = config.waypoints.rooms.teleporters.idColor;
-			ctx.fillText(layout.waypoints.indexOf(teleporter), teleporter.position.x, teleporter.position.y);
+			const index = layout.waypoints.indexOf(teleporter);
+			ctx.fillText(index, teleporter.position.x, teleporter.position.y);
 		}
 	}
 

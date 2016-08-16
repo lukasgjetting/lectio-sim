@@ -20,10 +20,10 @@
 		variation() {
 			return this.position.sub(
 				new Vector(
-					utils.randomInt(-this.width / 2 + config.people.radius,
-									 this.width / 2 - config.people.radius),
-					utils.randomInt(-this.height / 2 + config.people.radius,
-									 this.height / 2 - config.people.radius)
+					utils.randomInt(((-this.width) / 2) + config.people.radius,
+									  (this.width / 2) - config.people.radius),
+					utils.randomInt(((-this.height) / 2) + config.people.radius,
+									  (this.height / 2) - config.people.radius)
 				)
 			);
 		}

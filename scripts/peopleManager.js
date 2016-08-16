@@ -3,6 +3,7 @@
 	const Teacher = require('./people/teacher.js');
 	const utils = require('./utils.js');
 	const config = require('./config.js');
+	// eslint-disable-next-line import/no-extraneous-dependencies
 	const json = require('json!./scraping/test.json');
 
 	const people = [];
